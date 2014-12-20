@@ -1,7 +1,7 @@
 """print_utils.py: A library with some print functions. Very useful during
 development.
 
-Last modified: Sat Jan 18, 2014  05:01PM
+Last modified: Sat Dec 20, 2014  09:51PM
 
 """
     
@@ -16,6 +16,7 @@ __status__           = "Development"
 
 import inspect
 import sys
+import globals as g
 
 HEADER = '\033[95m'
 OKBLUE = '\033[94m'
@@ -90,7 +91,6 @@ def dump(label, msg, frame=None, exception=None):
             msg = [msg[0]] + ["`|- {0}`".format(x) for x in msg[1:]] 
         msg ="\n\t".join(msg)
 
-
     if not frame :
         print(prefix+"{0}".format(colored(msg,label)))
     else :
@@ -100,3 +100,21 @@ def dump(label, msg, frame=None, exception=None):
     if exception:
         print(" [Expcetion] {0}".format(exception))
 
+
+def log(label, msg, frame=None, verbosity = 0, file=None):
+    """Log """
+
+    prefix = '[{0}] '.format(label)
+    if type(msg) == list:
+        if len(msg) > 1:
+            msg = [msg[0]] + ["`|- {0}`".format(x) for x in msg[1:]] 
+        msg ="\n\t".join(msg)
+    if not frame:
+        msg = prefix+"{0}".format(colored(msg,label))
+    else:
+        msg = prefix+"@{0}:{1} {2}".format(filename, frame.f_lineno, colored(msg, label))
+
+    if file:
+        print(msg, file)
+    if verbosity >= g.verbosity_:
+        print(msg)
